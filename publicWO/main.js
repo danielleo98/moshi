@@ -9,6 +9,11 @@ $.getJSON('csvjson.json', function(csvjson) {
     '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
     '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
   ];
+  var BACKGROUND_COLORS = [
+    'rgba(226,20,0,0.5)', 'rgba(145,88,15,0.5)', 'rgba(248,167,0,0.5)', 'rgba(247,139,0,0.5)',
+    'rgba(88,220,0,0.5)', 'rgba(40,123,0,0.5)', 'rgba(168,240,122,0.5)', 'rgba(74,232,196,0.5)',
+    'rgba(59,136,235,0.5)', 'rgba(56,36,170,0.5)', 'rgba(167,0,255,0.5)', 'rgba(211,0,231,0.5)'
+  ];
 
   // Initialize variables
   var $window = $(window);
@@ -167,17 +172,28 @@ $.getJSON('csvjson.json', function(csvjson) {
       $typingMessages.remove();
     }
 
-    var $usernameDiv = $('<span class="username"/>')
-      .text(data.username)
-      .css('color', getUsernameColor(data.username));
-    var $messageBodyDiv = $('<span class="messageBody">')
-      .text(data.message);
-
     var typingClass = data.typing ? 'typing' : '';
+
+    if (previous_sender !== data.username) {
+        console.log("need username and time");
+        var $usernameDiv = $('<span class="username"/>')
+            .text(data.username)
+            .css('color', getUsernameColor(data.username));
+
+        var time = formatTime();
+        var $timeDiv = $('<span class="time"/>')
+            .text(time);
+        var $breakDiv = $('<br>');
+    }
+
+    var $messageBodyDiv = $('<span class="messageBody">')
+          .text(data.message)
+        .css('backgroundColor', getBackGroundUsernameColor(data.username));
+
     var $messageDiv = $('<li class="message"/>')
       .data('username', data.username) //?
       .addClass(typingClass)
-      .append($usernameDiv, $messageBodyDiv);
+      .append($usernameDiv, $timeDiv, $breakDiv, $messageBodyDiv);
 
     if (data.message != 'is typing'){
         conv_expriment.convo.push({name: data.username, text: data.message, is_suggested: data.is_suggested, date: new Date()});
@@ -206,6 +222,19 @@ $.getJSON('csvjson.json', function(csvjson) {
       observed_smart_replies=new Array();
     }
     addMessageElement($messageDiv, options);
+  }
+
+  //formats time for adding to div
+  function formatTime() {
+    var date = new Date();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours == 0 ? 12 : hours;
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
   }
 
   // Adds the visual chat typing message
@@ -296,6 +325,18 @@ $.getJSON('csvjson.json', function(csvjson) {
     var index = Math.abs(hash % COLORS.length);
     return COLORS[index];
   }
+
+   // Gets the background color for a username through our hash function
+   function getBackGroundUsernameColor (username) {
+    // Compute hash code
+    var hash = 7;
+    for (var i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + (hash << 5) - hash;
+    }
+    // Calculate color
+    var index = Math.abs(hash % COLORS.length);
+    return BACKGROUND_COLORS[index];
+}
 
   // Keyboard events
 

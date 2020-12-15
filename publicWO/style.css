@@ -172,6 +172,25 @@ ul {
   padding: 10px 20px 10px 20px;
 }
 
+.messageBody {
+  padding: 8px 12px;
+  border-radius: 15px;
+  display: block;
+  margin: 2px;
+  width: fit-content;
+  max-width: 70%;
+}
+
+.message {
+  margin: 8px 0px;
+}
+
+.time {
+  font-size: 60%;
+  color: gray;
+  font-weight: 600;
+}
+
 .message.typing .messageBody {
   color: gray;
 }
@@ -181,6 +200,7 @@ ul {
   overflow: hidden;
   padding-right: 15px;
   text-align: right;
+  font-size: 100%;
 }
 
 /* Input */
